@@ -7,26 +7,26 @@ import (
 	"os"
 )
 
-type IDFAInfo struct {
-	IDFA   string `json:"idfa"`
-	TK     string `json:"tk"`
-	Status int    `json:"status"`
+type MemberReport struct {
+	MemberID string `json:"member_id"`
+	TK       string `json:"tk"`
+	Status   int    `json:"status"`
 }
 
-type InputInfo struct {
-	IDFA string `json:"idfa"`
+type InputBody struct {
+	MemberID string `json:"member_id"`
 }
 
-type OutputInfo struct {
-	Code    int        `json:"code"`
-	Message string     `json:"message"`
-	Data    []IDFAInfo `json: "data"`
+type OutputBody struct {
+	Code    int            `json:"code"`
+	Message string         `json:"message"`
+	Data    []MemberReport `json: "data"`
 }
 
 func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	output := OutputInfo{0, "", []IDFAInfo{}}
+	output := OutputBody{0, "", []MemberReport{}}
 
 	switch r.Method {
 	case "POST":
@@ -34,7 +34,7 @@ func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
 
 		decoder := json.NewDecoder(r.Body)
 		defer r.Body.Close()
-		var t []InputInfo
+		var t []InputBody
 		err := decoder.Decode(&t)
 		if err != nil {
 			w.WriteHeader(400)
@@ -43,7 +43,7 @@ func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		for _, one := range t {
-			output.Data = append(output.Data, IDFAInfo{one.IDFA, "", 0})
+			output.Data = append(output.Data, MemberReport{one.MemberID, "", 0})
 		}
 
 		json.NewEncoder(w).Encode(output)

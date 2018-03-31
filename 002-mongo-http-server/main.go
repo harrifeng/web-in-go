@@ -11,10 +11,10 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type MemberReport struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
-	MemberID  int64         `json:"member_id"`
-	Telephone string        `json:"telephone"`
+type Member struct {
+	ID        bson.ObjectId `json:"-" bson:"_id,omitempty"`
+	MemberID  int64         `json:"member_id" bson:"member_id"`
+	Telephone string        `json:"telephone" bson:"telephone"`
 }
 
 type InputBody struct {
@@ -22,23 +22,19 @@ type InputBody struct {
 }
 
 type OutputBody struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	// Data    []MemberReport `json: "data"`
+	Code    int      `json:"code"`
+	Message string   `json:"message"`
+	Data    []Member `json: "data"`
 }
 
 func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
 	session := mongodb.CloneSession()
 	defer session.Close() // Return to the pool
 	c := session.DB("member_report").C("members")
-	result := MemberReport{}
-
-	err := c.Find(bson.M{"member_id": 1}).One(&result)
-	fmt.Println(err, result)
 
 	w.Header().Set("Content-Type", "application/json")
 
-	output := OutputBody{0, ""}
+	output := OutputBody{0, "", []Member{}}
 
 	switch r.Method {
 	case "POST":
@@ -55,8 +51,14 @@ func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		for _, one := range t {
-			_ = one
-			// output.Data = append(output.Data)
+			result := Member{}
+			err := c.Find(bson.M{"member_id": one.MemberID}).One(&result)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println("result", result)
+			}
+			output.Data = append(output.Data, result)
 		}
 
 		json.NewEncoder(w).Encode(output)

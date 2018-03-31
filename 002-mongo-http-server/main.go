@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type MemberReport struct {
-	MemberID  int64  `json:"member_id"`
-	Telephone string `json:"telephone"`
+	ID        bson.ObjectId `bson:"_id,omitempty"`
+	MemberID  int64         `json:"member_id"`
+	Telephone string        `json:"telephone"`
 }
 
 type InputBody struct {
@@ -17,15 +21,24 @@ type InputBody struct {
 }
 
 type OutputBody struct {
-	Code    int            `json:"code"`
-	Message string         `json:"message"`
-	Data    []MemberReport `json: "data"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	// Data    []MemberReport `json: "data"`
 }
 
 func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
+	url := "127.0.0.1"
+	session, err := mgo.Dial(url)
+	fmt.Println(err)
+	c := session.DB("member_report").C("members")
+	result := MemberReport{}
+
+	err = c.Find(bson.M{"member_id": 1}).One(&result)
+	fmt.Println(err, result)
+
 	w.Header().Set("Content-Type", "application/json")
 
-	output := OutputBody{0, "", []MemberReport{}}
+	output := OutputBody{0, ""}
 
 	switch r.Method {
 	case "POST":
@@ -42,7 +55,8 @@ func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		for _, one := range t {
-			output.Data = append(output.Data, MemberReport{one.MemberID, "12345678912"})
+			_ = one
+			// output.Data = append(output.Data)
 		}
 
 		json.NewEncoder(w).Encode(output)

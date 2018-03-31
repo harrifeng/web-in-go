@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"gopkg.in/mgo.v2"
+	"github.com/harrifeng/web-in-go/db/mongodb"
+
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -27,13 +28,12 @@ type OutputBody struct {
 }
 
 func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
-	url := "127.0.0.1"
-	session, err := mgo.Dial(url)
-	fmt.Println(err)
+	session := mongodb.CloneSession()
+	defer session.Close() // Return to the pool
 	c := session.DB("member_report").C("members")
 	result := MemberReport{}
 
-	err = c.Find(bson.M{"member_id": 1}).One(&result)
+	err := c.Find(bson.M{"member_id": 1}).One(&result)
 	fmt.Println(err, result)
 
 	w.Header().Set("Content-Type", "application/json")

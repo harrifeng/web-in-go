@@ -8,13 +8,12 @@ import (
 )
 
 type MemberReport struct {
-	MemberID string `json:"member_id"`
-	TK       string `json:"tk"`
-	Status   int    `json:"status"`
+	MemberID  int64  `json:"member_id"`
+	Telephone string `json:"telephone"`
 }
 
 type InputBody struct {
-	MemberID string `json:"member_id"`
+	MemberID int64 `json:"member_id"`
 }
 
 type OutputBody struct {
@@ -43,7 +42,7 @@ func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		for _, one := range t {
-			output.Data = append(output.Data, MemberReport{one.MemberID, "", 0})
+			output.Data = append(output.Data, MemberReport{one.MemberID, "12345678912"})
 		}
 
 		json.NewEncoder(w).Encode(output)

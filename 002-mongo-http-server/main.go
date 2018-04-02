@@ -30,7 +30,7 @@ type OutputBody struct {
 func MemberRelationHandler(w http.ResponseWriter, r *http.Request) {
 	session := mongodb.CloneSession()
 	defer session.Close() // Return to the pool
-	c := session.DB("member_report").C("members")
+	c := session.DB("").C("members")
 
 	w.Header().Set("Content-Type", "application/json")
 

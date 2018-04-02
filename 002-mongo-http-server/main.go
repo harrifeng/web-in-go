@@ -78,6 +78,7 @@ func main() {
 	fmt.Println()
 
 	http.HandleFunc("/member_info", MemberRelationHandler)
+	http.Handle("/", http.FileServer(http.Dir("public")))
 	http.ListenAndServe("0.0.0.0:6789", nil)
 	os.Exit(0)
 }

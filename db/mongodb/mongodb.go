@@ -3,14 +3,14 @@ package mongodb
 import (
 	"time"
 
-	"gopkg.in/mgo.v2"
+	mgo "gopkg.in/mgo.v2"
 )
 
 //global
 var GlobalMgoSession *mgo.Session
 
 func init() {
-	globalMgoSession, err := mgo.DialWithTimeout("mongodb://localhost:27017/member_report", 10*time.Second)
+	globalMgoSession, err := mgo.DialWithTimeout("mongodb://localhost:27027/web_in_go", 10*time.Second)
 	if err != nil {
 		panic(err)
 	}

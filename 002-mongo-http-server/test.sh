@@ -1,1 +1,1 @@
-curl -H "Content-Type: application/json" -XPOST -d '[{"idfa": "first"}, {"idfa": "second"}]' http://localhost:5679/member_relation
+curl -H "Content-Type: application/json" -XPOST -d '[{"member_id": 1}]' http://localhost:6789/member_info

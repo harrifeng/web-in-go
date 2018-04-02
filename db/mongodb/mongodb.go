@@ -10,7 +10,7 @@ import (
 var GlobalMgoSession *mgo.Session
 
 func init() {
-	globalMgoSession, err := mgo.DialWithTimeout("mongodb://localhost:27027/web_in_go", 10*time.Second)
+	globalMgoSession, err := mgo.DialWithTimeout("mongodb://localhost:27027/web-in-go", 10*time.Second)
 	if err != nil {
 		panic(err)
 	}
